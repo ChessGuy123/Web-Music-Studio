@@ -299,6 +299,72 @@
                     </div>
 
                     <div class="control-group">
+                        <h3>AI Phonk Generator</h3>
+                        <button class="button" id="generatePhonkBtn">Generate Phonk Song</button>
+                        <button class="button" id="playAISongBtn">Play AI Song</button>
+                        <button class="button" id="saveAISongBtn">Save AI Song</button>
+                        
+                        <div class="slider-container" style="margin-top: 15px;">
+                            <label>Energy Level</label>
+                            <input type="range" class="slider" id="energyLevel" min="1" max="10" value="7">
+                            <span id="energyDisplay">7/10</span>
+                        </div>
+                        
+                        <div class="slider-container">
+                            <label>Complexity</label>
+                            <input type="range" class="slider" id="complexity" min="1" max="10" value="6">
+                            <span id="complexityDisplay">6/10</span>
+                        </div>
+                        
+                        <div class="slider-container">
+                            <label>Style</label>
+                            <select id="phonkStyle" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ddd;">
+                                <option value="classic">Classic Phonk</option>
+                                <option value="drift">Drift Phonk</option>
+                                <option value="aggressive">Aggressive Phonk</option>
+                                <option value="melodic">Melodic Phonk</option>
+                                <option value="minimal">Minimal Phonk</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <h3>Song Controls</h3>
+                        <button class="button" id="recordSongBtn">Record Song</button>
+                        <button class="button" id="playSongBtn">Play Song</button>
+                        <button class="button" id="stopSongBtn">Stop Song</button>
+                        <button class="button" id="saveSongBtn">Save Song</button>
+                        <button class="button" id="loadSongBtn">Load Song</button>
+                        <button class="button" id="clearSongBtn">Clear Song</button>
+                        
+                        <div class="slider-container" style="margin-top: 15px;">
+                            <label>Tempo (BPM)</label>
+                            <input type="range" class="slider" id="tempo" min="60" max="180" value="120">
+                            <span id="tempoDisplay">120 BPM</span>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <h3>Envelope</h3>
+                        <div class="slider-container">
+                            <label>Attack</label>
+                            <input type="range" class="slider" id="attack" min="0" max="2" value="0.1" step="0.01">
+                        </div>
+                        <div class="slider-container">
+                            <label>Decay</label>
+                            <input type="range" class="slider" id="decay" min="0" max="2" value="0.2" step="0.01">
+                        </div>
+                        <div class="slider-container">
+                            <label>Sustain</label>
+                            <input type="range" class="slider" id="sustain" min="0" max="1" value="0.3" step="0.01">
+                        </div>
+                        <div class="slider-container">
+                            <label>Release</label>
+                            <input type="range" class="slider" id="release" min="0" max="2" value="0.1" step="0.01">
+                        </div>
+                    </div>
+
+                    <div class="control-group">
                         <h3>Effects</h3>
                         <div class="slider-container">
                             <label>Distortion</label>
@@ -367,6 +433,23 @@
                 this.distortionNode = null;
                 this.filterNode = null;
                 this.convolverNode = null;
+                
+                // Song recording and playback
+                this.isRecordingSong = false;
+                this.isPlayingSong = false;
+                this.songNotes = [];
+                this.songStartTime = 0;
+                this.songPlaybackTimer = null;
+                this.tempo = 120;
+                this.savedSongs = [];
+                
+                // AI Phonk Generator
+                this.aiSong = [];
+                this.isGeneratingAISong = false;
+                this.isPlayingAISong = false;
+                this.energyLevel = 7;
+                this.complexity = 6;
+                this.phonkStyle = 'classic';
                 
                 this.init();
             }
@@ -765,6 +848,78 @@
                     this.updateStatus('Preset: ' + e.target.value);
                 });
                 
+                // AI Generator controls
+                document.getElementById('energyLevel').addEventListener('input', (e) => {
+                    this.energyLevel = parseInt(e.target.value);
+                    document.getElementById('energyDisplay').textContent = this.energyLevel + '/10';
+                });
+                
+                document.getElementById('complexity').addEventListener('input', (e) => {
+                    this.complexity = parseInt(e.target.value);
+                    document.getElementById('complexityDisplay').textContent = this.complexity + '/10';
+                });
+                
+                document.getElementById('phonkStyle').addEventListener('change', (e) => {
+                    this.phonkStyle = e.target.value;
+                });
+                
+                // AI Generator buttons
+                document.getElementById('generatePhonkBtn').addEventListener('click', () => {
+                    this.generatePhonkSong();
+                });
+                
+                document.getElementById('playAISongBtn').addEventListener('click', () => {
+                    if (this.isPlayingAISong) {
+                        this.stopAISong();
+                    } else {
+                        this.playAISong();
+                    }
+                });
+                
+                document.getElementById('saveAISongBtn').addEventListener('click', () => {
+                    this.saveAISong();
+                });
+                
+                // Tempo slider
+                document.getElementById('tempo').addEventListener('input', (e) => {
+                    this.tempo = parseInt(e.target.value);
+                    document.getElementById('tempoDisplay').textContent = this.tempo + ' BPM';
+                });
+                
+                // Song control buttons
+                document.getElementById('recordSongBtn').addEventListener('click', () => {
+                    if (this.isRecordingSong) {
+                        this.stopRecordingSong();
+                    } else {
+                        this.startRecordingSong();
+                    }
+                });
+                
+                document.getElementById('playSongBtn').addEventListener('click', () => {
+                    if (this.isPlayingSong) {
+                        this.stopSong();
+                    } else {
+                        this.playSong();
+                    }
+                });
+                
+                document.getElementById('stopSongBtn').addEventListener('click', () => {
+                    this.stopSong();
+                    this.stopRecordingSong();
+                });
+                
+                document.getElementById('saveSongBtn').addEventListener('click', () => {
+                    this.saveSong();
+                });
+                
+                document.getElementById('loadSongBtn').addEventListener('click', () => {
+                    this.loadSong();
+                });
+                
+                document.getElementById('clearSongBtn').addEventListener('click', () => {
+                    this.clearSong();
+                });
+                
                 // Frequency slider
                 document.getElementById('frequency').addEventListener('input', (e) => {
                     const freq = parseFloat(e.target.value);
@@ -819,6 +974,18 @@
                     this.stopNote();
                 }
                 
+                // Record note if recording song
+                if (this.isRecordingSong) {
+                    const timestamp = Date.now() - this.songStartTime;
+                    this.songNotes.push({
+                        frequency: frequency,
+                        note: note,
+                        preset: preset,
+                        timestamp: timestamp,
+                        duration: 200 // Default duration
+                    });
+                }
+                
                 // Play based on selected preset
                 switch (preset) {
                     case 'cowbell':
@@ -853,6 +1020,577 @@
                 
                 // Start visualization
                 this.startVisualization();
+            }
+            
+            // Song recording and playback methods
+            startRecordingSong() {
+                this.isRecordingSong = true;
+                this.songNotes = [];
+                this.songStartTime = Date.now();
+                this.updateStatus('Recording song... Click notes to record');
+                
+                const btn = document.getElementById('recordSongBtn');
+                btn.textContent = 'Stop Recording';
+                btn.classList.add('active');
+            }
+            
+            stopRecordingSong() {
+                this.isRecordingSong = false;
+                this.updateStatus('Song recording stopped. ' + this.songNotes.length + ' notes recorded');
+                
+                const btn = document.getElementById('recordSongBtn');
+                btn.textContent = 'Record Song';
+                btn.classList.remove('active');
+            }
+            
+            playSong() {
+                if (this.songNotes.length === 0) {
+                    this.updateStatus('No song to play. Record a song first!');
+                    return;
+                }
+                
+                this.isPlayingSong = true;
+                this.updateStatus('Playing song...');
+                
+                const btn = document.getElementById('playSongBtn');
+                btn.textContent = 'Stop Playback';
+                btn.classList.add('active');
+                
+                // Play each note at its recorded time
+                this.songNotes.forEach(noteData => {
+                    setTimeout(() => {
+                        if (this.isPlayingSong) {
+                            // Set preset before playing
+                            document.getElementById('soundPreset').value = noteData.preset;
+                            this.playNote(noteData.frequency, noteData.note);
+                        }
+                    }, noteData.timestamp);
+                });
+                
+                // Stop playback after last note
+                const lastNoteTime = Math.max(...this.songNotes.map(n => n.timestamp));
+                setTimeout(() => {
+                    this.stopSong();
+                }, lastNoteTime + 1000);
+            }
+            
+            stopSong() {
+                this.isPlayingSong = false;
+                this.updateStatus('Song stopped');
+                
+                const btn = document.getElementById('playSongBtn');
+                btn.textContent = 'Play Song';
+                btn.classList.remove('active');
+            }
+            
+            saveSong() {
+                if (this.songNotes.length === 0) {
+                    this.updateStatus('No song to save. Record a song first!');
+                    return;
+                }
+                
+                const songData = {
+                    name: 'Song ' + (this.savedSongs.length + 1),
+                    tempo: this.tempo,
+                    notes: this.songNotes,
+                    timestamp: Date.now()
+                };
+                
+                this.savedSongs.push(songData);
+                
+                // Save to localStorage
+                localStorage.setItem('musicStudioSongs', JSON.stringify(this.savedSongs));
+                
+                this.updateStatus('Song saved: ' + songData.name);
+                this.addAnalysis('Song saved: ' + songData.name + ' (' + this.songNotes.length + ' notes)');
+                
+                // Also download as JSON file
+                this.downloadSong(songData);
+            }
+            
+            downloadSong(songData) {
+                const json = JSON.stringify(songData, null, 2);
+                const blob = new Blob([json], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = songData.name.replace(/\s+/g, '_') + '.json';
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+            
+            loadSong() {
+                const savedSongs = localStorage.getItem('musicStudioSongs');
+                if (savedSongs) {
+                    this.savedSongs = JSON.parse(savedSongs);
+                    this.updateStatus('Loaded ' + this.savedSongs.length + ' saved songs');
+                    this.addAnalysis('Loaded ' + this.savedSongs.length + ' saved songs');
+                    
+                    // Load the most recent song
+                    if (this.savedSongs.length > 0) {
+                        const lastSong = this.savedSongs[this.savedSongs.length - 1];
+                        this.songNotes = lastSong.notes;
+                        this.tempo = lastSong.tempo;
+                        document.getElementById('tempo').value = this.tempo;
+                        document.getElementById('tempoDisplay').textContent = this.tempo + ' BPM';
+                        this.updateStatus('Loaded song: ' + lastSong.name);
+                    }
+                } else {
+                    this.updateStatus('No saved songs found');
+                }
+            }
+            
+            clearSong() {
+                this.songNotes = [];
+                this.updateStatus('Song cleared');
+                this.addAnalysis('Song cleared');
+            }
+            
+            loadSongFromFile(event) {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        try {
+                            const songData = JSON.parse(e.target.result);
+                            this.songNotes = songData.notes;
+                            this.tempo = songData.tempo;
+                            document.getElementById('tempo').value = this.tempo;
+                            document.getElementById('tempoDisplay').textContent = this.tempo + ' BPM';
+                            this.updateStatus('Loaded song: ' + songData.name);
+                            this.addAnalysis('Loaded song: ' + songData.name + ' (' + this.songNotes.length + ' notes)');
+                        } catch (error) {
+                            this.updateStatus('Error loading song file');
+                        }
+                    };
+                    reader.readAsText(file);
+                }
+            }
+            
+            // AI Phonk Song Generation Methods
+            generatePhonkSong() {
+                this.isGeneratingAISong = true;
+                this.updateStatus('Generating AI Phonk Song...');
+                
+                // Get user preferences
+                this.energyLevel = parseInt(document.getElementById('energyLevel').value);
+                this.complexity = parseInt(document.getElementById('complexity').value);
+                this.phonkStyle = document.getElementById('phonkStyle').value;
+                
+                // Generate song based on style
+                switch (this.phonkStyle) {
+                    case 'classic':
+                        this.generateClassicPhonk();
+                        break;
+                    case 'drift':
+                        this.generateDriftPhonk();
+                        break;
+                    case 'aggressive':
+                        this.generateAggressivePhonk();
+                        break;
+                    case 'melodic':
+                        this.generateMelodicPhonk();
+                        break;
+                    case 'minimal':
+                        this.generateMinimalPhonk();
+                        break;
+                    default:
+                        this.generateClassicPhonk();
+                }
+                
+                this.updateStatus('AI Phonk Song Generated! (' + this.aiSong.length + ' notes)');
+                this.addAnalysis('AI Generated ' + this.phonkStyle.charAt(0).toUpperCase() + this.phonkStyle.slice(1) + ' Phonk Song');
+            }
+            
+            generateClassicPhonk() {
+                this.aiSong = [];
+                const beatDuration = 60000 / this.tempo; // Duration of one beat in ms
+                const measures = 16; // 16 measures for 1 minute at 120 BPM
+                
+                // Classic phonk progression (minor keys with cowbell hits)
+                const progression = [
+                    { root: 'A', type: 'minor', cowbell: true },
+                    { root: 'G', type: 'minor', cowbell: true },
+                    { root: 'F', type: 'minor', cowbell: true },
+                    { root: 'E', type: 'minor', cowbell: true }
+                ];
+                
+                let currentTime = 0;
+                
+                for (let measure = 0; measure < measures; measure++) {
+                    const chord = progression[measure % progression.length];
+                    
+                    // Add cowbell hits on beats 1 and 3
+                    this.aiSong.push({
+                        frequency: 800,
+                        note: 'Cowbell',
+                        preset: 'phonk-cowbell-hit',
+                        timestamp: currentTime,
+                        duration: 100
+                    });
+                    
+                    // Add 808 bass on beat 1
+                    this.aiSong.push({
+                        frequency: this.getNoteFrequency(chord.root, 2),
+                        note: chord.root + '2',
+                        preset: '808-bass',
+                        timestamp: currentTime,
+                        duration: beatDuration * 2
+                    });
+                    
+                    // Add chord on beat 2
+                    this.aiSong.push({
+                        frequency: this.getNoteFrequency(chord.root, 4),
+                        note: chord.root + '4',
+                        preset: 'phonk-chord',
+                        timestamp: currentTime + beatDuration,
+                        duration: beatDuration * 2
+                    });
+                    
+                    // Add percussion based on complexity
+                    if (this.complexity > 5) {
+                        this.aiSong.push({
+                            frequency: 1000,
+                            note: 'Perc',
+                            preset: 'phonk-perc',
+                            timestamp: currentTime + beatDuration * 2.5,
+                            duration: 50
+                        });
+                    }
+                    
+                    // Add melody based on energy
+                    if (this.energyLevel > 6) {
+                        const melodyNotes = this.generateMelodyNotes(chord.root);
+                        melodyNotes.forEach((note, index) => {
+                            this.aiSong.push({
+                                frequency: note.freq,
+                                note: note.name,
+                                preset: 'synth-pluck',
+                                timestamp: currentTime + beatDuration * (2 + index * 0.5),
+                                duration: beatDuration * 0.5
+                            });
+                        });
+                    }
+                    
+                    currentTime += beatDuration * 4; // 4 beats per measure
+                }
+            }
+            
+            generateDriftPhonk() {
+                this.aiSong = [];
+                const beatDuration = 60000 / this.tempo;
+                const measures = 16;
+                
+                // Drift phonk - more atmospheric, sustained chords
+                const progression = [
+                    { root: 'C', type: 'minor', atmosphere: true },
+                    { root: 'Bb', type: 'minor', atmosphere: true },
+                    { root: 'Ab', type: 'minor', atmosphere: true },
+                    { root: 'G', type: 'minor', atmosphere: true }
+                ];
+                
+                let currentTime = 0;
+                
+                for (let measure = 0; measure < measures; measure++) {
+                    const chord = progression[measure % progression.length];
+                    
+                    // Atmospheric pad
+                    this.aiSong.push({
+                        frequency: this.getNoteFrequency(chord.root, 3),
+                        note: chord.root + '3',
+                        preset: 'phonk-chord',
+                        timestamp: currentTime,
+                        duration: beatDuration * 4
+                    });
+                    
+                    // Cowbell pattern
+                    for (let beat = 0; beat < 4; beat++) {
+                        if (beat % 2 === 0) {
+                            this.aiSong.push({
+                                frequency: 800,
+                                note: 'Cowbell',
+                                preset: 'phonk-cowbell-hit',
+                                timestamp: currentTime + beat * beatDuration,
+                                duration: 100
+                            });
+                        }
+                    }
+                    
+                    // Deep 808
+                    this.aiSong.push({
+                        frequency: this.getNoteFrequency(chord.root, 1),
+                        note: chord.root + '1',
+                        preset: '808-bass',
+                        timestamp: currentTime,
+                        duration: beatDuration * 4
+                    });
+                    
+                    currentTime += beatDuration * 4;
+                }
+            }
+            
+            generateAggressivePhonk() {
+                this.aiSong = [];
+                const beatDuration = 60000 / this.tempo;
+                const measures = 16;
+                
+                // Aggressive phonk - fast cowbell patterns, heavy bass
+                const progression = [
+                    { root: 'E', type: 'minor', aggressive: true },
+                    { root: 'D', type: 'minor', aggressive: true },
+                    { root: 'C', type: 'minor', aggressive: true },
+                    { root: 'B', type: 'minor', aggressive: true }
+                ];
+                
+                let currentTime = 0;
+                
+                for (let measure = 0; measure < measures; measure++) {
+                    const chord = progression[measure % progression.length];
+                    
+                    // Fast cowbell pattern (every beat)
+                    for (let beat = 0; beat < 4; beat++) {
+                        this.aiSong.push({
+                            frequency: 900,
+                            note: 'Cowbell',
+                            preset: 'phonk-cowbell-hit',
+                            timestamp: currentTime + beat * beatDuration,
+                            duration: 80
+                        });
+                    }
+                    
+                    // Heavy 808 bass
+                    this.aiSong.push({
+                        frequency: this.getNoteFrequency(chord.root, 1),
+                        note: chord.root + '1',
+                        preset: '808-bass',
+                        timestamp: currentTime,
+                        duration: beatDuration * 2
+                    });
+                    
+                    // Aggressive chords
+                    this.aiSong.push({
+                        frequency: this.getNoteFrequency(chord.root, 4),
+                        note: chord.root + '4',
+                        preset: 'phonk-chord',
+                        timestamp: currentTime + beatDuration,
+                        duration: beatDuration
+                    });
+                    
+                    // Extra percussion
+                    if (this.energyLevel > 7) {
+                        for (let i = 0; i < 4; i++) {
+                            this.aiSong.push({
+                                frequency: 1200,
+                                note: 'Perc',
+                                preset: 'phonk-perc',
+                                timestamp: currentTime + i * beatDuration * 0.5,
+                                duration: 50
+                            });
+                        }
+                    }
+                    
+                    currentTime += beatDuration * 4;
+                }
+            }
+            
+            generateMelodicPhonk() {
+                this.aiSong = [];
+                const beatDuration = 60000 / this.tempo;
+                const measures = 16;
+                
+                // Melodic phonk - more complex melodies
+                const progression = [
+                    { root: 'Am', melody: ['A', 'C', 'E', 'G'] },
+                    { root: 'Gm', melody: ['G', 'Bb', 'D', 'F'] },
+                    { root: 'Fm', melody: ['F', 'Ab', 'C', 'Eb'] },
+                    { root: 'Em', melody: ['E', 'G', 'B', 'D'] }
+                ];
+                
+                let currentTime = 0;
+                
+                for (let measure = 0; measure < measures; measure++) {
+                    const chord = progression[measure % progression.length];
+                    
+                    // Melodic piano
+                    chord.melody.forEach((note, index) => {
+                        this.aiSong.push({
+                            frequency: this.getNoteFrequency(note, 4),
+                            note: note + '4',
+                            preset: 'electric-piano',
+                            timestamp: currentTime + index * beatDuration * 0.5,
+                            duration: beatDuration * 1.5
+                        });
+                    });
+                    
+                    // Cowbell on beats 2 and 4
+                    this.aiSong.push({
+                        frequency: 800,
+                        note: 'Cowbell',
+                        preset: 'phonk-cowbell-hit',
+                        timestamp: currentTime + beatDuration,
+                        duration: 100
+                    });
+                    
+                    this.aiSong.push({
+                        frequency: 800,
+                        note: 'Cowbell',
+                        preset: 'phonk-cowbell-hit',
+                        timestamp: currentTime + beatDuration * 3,
+                        duration: 100
+                    });
+                    
+                    // Supporting bass
+                    this.aiSong.push({
+                        frequency: this.getNoteFrequency(chord.root[0], 2),
+                        note: chord.root[0] + '2',
+                        preset: '808-bass',
+                        timestamp: currentTime,
+                        duration: beatDuration * 4
+                    });
+                    
+                    currentTime += beatDuration * 4;
+                }
+            }
+            
+            generateMinimalPhonk() {
+                this.aiSong = [];
+                const beatDuration = 60000 / this.tempo;
+                const measures = 16;
+                
+                // Minimal phonk - sparse elements
+                const progression = ['A', 'G', 'F', 'E'];
+                
+                let currentTime = 0;
+                
+                for (let measure = 0; measure < measures; measure++) {
+                    const root = progression[measure % progression.length];
+                    
+                    // Single cowbell hit per measure
+                    this.aiSong.push({
+                        frequency: 800,
+                        note: 'Cowbell',
+                        preset: 'phonk-cowbell-hit',
+                        timestamp: currentTime,
+                        duration: 100
+                    });
+                    
+                    // Single bass note
+                    this.aiSong.push({
+                        frequency: this.getNoteFrequency(root, 2),
+                        note: root + '2',
+                        preset: '808-bass',
+                        timestamp: currentTime,
+                        duration: beatDuration * 2
+                    });
+                    
+                    // Occasional chord
+                    if (measure % 2 === 0) {
+                        this.aiSong.push({
+                            frequency: this.getNoteFrequency(root, 3),
+                            note: root + '3',
+                            preset: 'phonk-chord',
+                            timestamp: currentTime + beatDuration * 2,
+                            duration: beatDuration * 2
+                        });
+                    }
+                    
+                    currentTime += beatDuration * 4;
+                }
+            }
+            
+            getNoteFrequency(note, octave) {
+                const noteFrequencies = {
+                    'C': 261.63, 'C#': 277.18, 'D': 293.66, 'D#': 311.13,
+                    'E': 329.63, 'F': 349.23, 'F#': 369.99, 'G': 392.00,
+                    'G#': 415.30, 'A': 440.00, 'A#': 466.16, 'B': 493.88
+                };
+                
+                const baseFreq = noteFrequencies[note] || 440;
+                return baseFreq * Math.pow(2, octave - 4);
+            }
+            
+            generateMelodyNotes(root) {
+                // Generate simple melody based on root note
+                const scales = {
+                    'A': ['A', 'C', 'D', 'E', 'G'],
+                    'G': ['G', 'Bb', 'C', 'D', 'F'],
+                    'F': ['F', 'Ab', 'Bb', 'C', 'Eb'],
+                    'E': ['E', 'G', 'A', 'B', 'D']
+                };
+                
+                const scale = scales[root] || scales['A'];
+                return scale.slice(0, 3).map(note => ({
+                    freq: this.getNoteFrequency(note, 5),
+                    name: note + '5'
+                }));
+            }
+            
+            playAISong() {
+                if (this.aiSong.length === 0) {
+                    this.updateStatus('No AI song generated. Generate a song first!');
+                    return;
+                }
+                
+                this.isPlayingAISong = true;
+                this.updateStatus('Playing AI Phonk Song...');
+                
+                const btn = document.getElementById('playAISongBtn');
+                btn.textContent = 'Stop AI Song';
+                btn.classList.add('active');
+                
+                // Play each AI note at its timestamp
+                this.aiSong.forEach(noteData => {
+                    setTimeout(() => {
+                        if (this.isPlayingAISong) {
+                            // Set preset before playing
+                            document.getElementById('soundPreset').value = noteData.preset;
+                            this.playNote(noteData.frequency, noteData.note);
+                        }
+                    }, noteData.timestamp);
+                });
+                
+                // Stop playback after last note
+                const lastNoteTime = Math.max(...this.aiSong.map(n => n.timestamp));
+                setTimeout(() => {
+                    this.stopAISong();
+                }, lastNoteTime + 1000);
+            }
+            
+            stopAISong() {
+                this.isPlayingAISong = false;
+                this.updateStatus('AI Song stopped');
+                
+                const btn = document.getElementById('playAISongBtn');
+                btn.textContent = 'Play AI Song';
+                btn.classList.remove('active');
+            }
+            
+            saveAISong() {
+                if (this.aiSong.length === 0) {
+                    this.updateStatus('No AI song to save. Generate a song first!');
+                    return;
+                }
+                
+                const songData = {
+                    name: 'AI Phonk Song - ' + this.phonkStyle.charAt(0).toUpperCase() + this.phonkStyle.slice(1),
+                    tempo: this.tempo,
+                    style: this.phonkStyle,
+                    energy: this.energyLevel,
+                    complexity: this.complexity,
+                    notes: this.aiSong,
+                    timestamp: Date.now()
+                };
+                
+                this.savedSongs.push(songData);
+                
+                // Save to localStorage
+                localStorage.setItem('musicStudioSongs', JSON.stringify(this.savedSongs));
+                
+                this.updateStatus('AI Song saved: ' + songData.name);
+                this.addAnalysis('AI Song saved: ' + songData.name + ' (' + this.aiSong.length + ' notes)');
+                
+                // Also download as JSON file
+                this.downloadSong(songData);
             }
             
             createBasicSound(frequency) {
