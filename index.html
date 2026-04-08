@@ -575,6 +575,7 @@
                     <button class="button library-btn" id="saveToLibraryBtn">Save to Library</button>
                     <button class="button discard-btn" id="discardCreationBtn">Discard Creation</button>
                     <button class="button" id="viewLibraryBtn">View Library</button>
+                    <button class="button" id="testBtn">TEST BUTTON</button>
                 </div>
                 
                 <div class="ai-status">
@@ -1151,35 +1152,6 @@
                 return { oscillators, envelopes };
             }
             
-            setupPiano() {
-                const piano = document.getElementById('piano');
-                const notes = [
-                    { note: 'C', freq: 261.63, key: 'a', type: 'white' },
-                    { note: 'C#', freq: 277.18, key: 'w', type: 'black' },
-                    { note: 'D', freq: 293.66, key: 's', type: 'white' },
-                    { note: 'D#', freq: 311.13, key: 'e', type: 'black' },
-                    { note: 'E', freq: 329.63, key: 'd', type: 'white' },
-                    { note: 'F', freq: 349.23, key: 'f', type: 'white' },
-                    { note: 'F#', freq: 369.99, key: 't', type: 'black' },
-                    { note: 'G', freq: 392.00, key: 'g', type: 'white' },
-                    { note: 'G#', freq: 415.30, key: 'y', type: 'black' },
-                    { note: 'A', freq: 440.00, key: 'h', type: 'white' },
-                    { note: 'A#', freq: 466.16, key: 'j', type: 'black' },
-                    { note: 'B', freq: 493.88, key: 'k', type: 'white' },
-                    { note: 'C', freq: 523.25, key: 'l', type: 'white', octave: 5 }
-                ];
-                
-                notes.forEach(note => {
-                    const key = document.createElement('div');
-                    key.className = `piano-key ${note.type}`;
-                    key.textContent = note.note;
-                    key.dataset.freq = note.freq;
-                    key.onclick = () => this.playNote(note.freq, note.note);
-                    key.onmouseup = () => this.stopNote();
-                    piano.appendChild(key);
-                });
-            }
-            
             setupEventListeners() {
                 // AI Phonk Creator controls
                 document.getElementById('energyLevel').addEventListener('input', (e) => {
@@ -1221,6 +1193,7 @@
                 
                 // AI Generator buttons
                 document.getElementById('generatePhonkBtn').addEventListener('click', () => {
+                    alert('Generate button clicked!');
                     this.generatePhonkSong();
                 });
                 
@@ -1263,6 +1236,11 @@
                 
                 document.getElementById('clearLibraryBtn').addEventListener('click', () => {
                     this.clearLibrary();
+                });
+                
+                // Simple test button
+                document.getElementById('testBtn').addEventListener('click', () => {
+                    alert('Test button works! JavaScript is functional.');
                 });
             }
             
@@ -2745,7 +2723,15 @@
         let musicStudio;
         
         window.addEventListener('DOMContentLoaded', () => {
-            musicStudio = new MusicStudio();
+            console.log('DOM Content Loaded - Initializing Music Studio...');
+            try {
+                musicStudio = new MusicStudio();
+                console.log('Music Studio initialized successfully!');
+                alert('Music Studio initialized! Buttons should work now.');
+            } catch (error) {
+                console.error('Error initializing Music Studio:', error);
+                alert('Error initializing Music Studio: ' + error.message);
+            }
         });
     </script>
 </body>
