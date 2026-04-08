@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Music Studio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #8b5cf6;
+            --accent-color: #ec4899;
+            --background-dark: #0f0f23;
+            --background-light: #1a1a2e;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, var(--background-dark) 0%, var(--background-light) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px 0;
+        }
+
+        .control-panel {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .synth-panel {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+        }
+
+        .visualizer {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 30px;
+            height: 300px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .control-group {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .control-group h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .slider-container {
+            margin-bottom: 15px;
+        }
+
+        .slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: var(--gradient-2);
+            outline: none;
+            cursor: pointer;
+        }
+
+        .slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .button {
+            background: var(--gradient-1);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .button.active {
+            background: var(--gradient-3);
+        }
+
+        .piano-keys {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 2px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        .piano-key {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .piano-key:hover {
+            background: var(--gradient-2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .piano-key:active {
+            transform: translateY(0);
+            background: var(--gradient-3);
+        }
+
+        .piano-key.black {
+            background: #333;
+            color: white;
+        }
+
+        .visualizer-canvas {
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+        }
+
+        .info-panel {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .info-value {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Web Music Studio</h1>
+            <p class="subtitle">Create Music with Code & Web Audio</p>
+        </header>
+
+        <main class="main-content">
+            <section class="synth-panel">
+                <h2>🎛 Synthesizer</h2>
+                
+                <div class="controls-grid">
+                    <div class="control-group">
+                        <h3>Sound Presets</h3>
+                        <select id="soundPreset" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ddd; margin-bottom: 15px;">
+                            <option value="basic">Basic Synth</option>
+                            <option value="cowbell">Cowbell Phonk</option>
+                            <option value="electric-piano">Wavy Electric Piano</option>
+                            <option value="808-bass">808 Bass</option>
+                            <option value="synth-pluck">Synth Pluck</option>
+                            <option value="phonk-cowbell-hit">Phonk Cowbell Hit</option>
+                            <option value="phonk-perc">Phonk Percussion</option>
+                            <option value="phonk-chord">Phonk Chord</option>
+                        </select>
+                        
+                        <div class="slider-container">
+                            <label>Frequency</label>
+                            <input type="range" class="slider" id="frequency" min="20" max="2000" value="440">
+                        </div>
+                        <div class="slider-container">
+                            <label>Volume</label>
+                            <input type="range" class="slider" id="volume" min="0" max="100" value="50">
+                        </div>
+                        <div class="slider-container">
+                            <label>Wave Type</label>
+                            <select id="waveType" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid #ddd;">
+                                <option value="sine">Sine</option>
+                                <option value="square">Square</option>
+                                <option value="sawtooth">Sawtooth</option>
+                                <option value="triangle">Triangle</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <h3>Effects</h3>
+                        <div class="slider-container">
+                            <label>Distortion</label>
+                            <input type="range" class="slider" id="distortion" min="0" max="100" value="0">
+                        </div>
+                        <div class="slider-container">
+                            <label>Reverb</label>
+                            <input type="range" class="slider" id="reverb" min="0" max="100" value="0">
+                        </div>
+                        <div class="slider-container">
+                            <label>Filter Cutoff</label>
+                            <input type="range" class="slider" id="filter" min="100" max="20000" value="20000">
+                        </div>
+                        <button class="button" id="playBtn">Play</button>
+                        <button class="button" id="stopBtn">Stop</button>
+                        <button class="button" id="recordBtn">Record</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="visualizer">
+                <h2>🎵 Visualizer</h2>
+                <canvas class="visualizer-canvas" id="visualizer"></canvas>
+            </section>
+
+            <section class="control-panel">
+                <h2>🎹 Piano</h2>
+                <div class="piano-keys" id="piano">
+                    <!-- Piano keys will be generated by JavaScript -->
+                </div>
+            </section>
+
+            <section class="info-panel">
+                <h2>📊 Audio Info</h2>
+                <div class="info-item">
+                    <span class="info-label">Status:</span>
+                    <span class="info-value" id="status">Ready</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Frequency:</span>
+                    <span class="info-value" id="freqDisplay">440 Hz</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Note:</span>
+                    <span class="info-value" id="noteDisplay">A4</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Sample Rate:</span>
+                    <span class="info-value" id="sampleRate">48000 Hz</span>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        class MusicStudio {
+            constructor() {
+                this.audioContext = null;
+                this.oscillator = null;
+                this.gainNode = null;
+                this.analyser = null;
+                this.isPlaying = false;
+                this.isRecording = false;
+                this.recordedNotes = [];
+                this.currentPreset = 'basic';
+                this.distortionNode = null;
+                this.filterNode = null;
+                this.convolverNode = null;
+                
+                this.init();
+            }
+            
+            init() {
+                try {
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    this.setupAudioNodes();
+                    this.setupPiano();
+                    this.setupEventListeners();
+                    this.updateInfo();
+                    console.log('Music Studio initialized successfully');
+                } catch (error) {
+                    console.error('Failed to initialize audio context:', error);
+                    this.updateStatus('Error: ' + error.message);
+                }
+            }
+            
+            setupAudioNodes() {
+                // Create oscillator
+                this.oscillator = this.audioContext.createOscillator();
+                this.oscillator.type = 'sine';
+                this.oscillator.frequency.setValueAtTime(440, this.audioContext.currentTime);
+                
+                // Create gain node for volume control
+                this.gainNode = this.audioContext.createGain();
+                this.gainNode.gain.setValueAtTime(0.5, this.audioContext.currentTime);
+                
+                // Create analyser for visualization
+                this.analyser = this.audioContext.createAnalyser();
+                this.analyser.fftSize = 2048;
+                
+                // Create distortion for phonk sounds
+                this.distortionNode = this.audioContext.createWaveShaper();
+                this.distortionNode.curve = this.makeDistortionCurve(0);
+                this.distortionNode.oversample = '4x';
+                
+                // Create filter for frequency shaping
+                this.filterNode = this.audioContext.createBiquadFilter();
+                this.filterNode.type = 'lowpass';
+                this.filterNode.frequency.setValueAtTime(20000, this.audioContext.currentTime);
+                
+                // Connect nodes
+                this.oscillator.connect(this.filterNode);
+                this.filterNode.connect(this.distortionNode);
+                this.distortionNode.connect(this.gainNode);
+                this.gainNode.connect(this.analyser);
+                this.analyser.connect(this.audioContext.destination);
+                
+                // Start oscillator
+                this.oscillator.start();
+            }
+            
+            makeDistortionCurve(amount) {
+                const samples = 44100;
+                const curve = new Float32Array(samples);
+                const deg = Math.PI / 180;
+                
+                for (let i = 0; i < samples; i++) {
+                    const x = (i * 2) / samples - 1;
+                    curve[i] = ((3 + amount) * x * 20 * deg) / (Math.PI + amount * Math.abs(x));
+                }
+                
+                return curve;
+            }
+            
+            createCowbellSound(frequency) {
+                const now = this.audioContext.currentTime;
+                
+                // Create multiple oscillators for cowbell timbre
+                const osc1 = this.audioContext.createOscillator();
+                const osc2 = this.audioContext.createOscillator();
+                const osc3 = this.audioContext.createOscillator();
+                
+                // Set frequencies for cowbell harmonics
+                osc1.frequency.setValueAtTime(frequency, now);
+                osc2.frequency.setValueAtTime(frequency * 2.4, now);
+                osc3.frequency.setValueAtTime(frequency * 3.6, now);
+                
+                // Set wave types for metallic sound
+                osc1.type = 'square';
+                osc2.type = 'square';
+                osc3.type = 'triangle';
+                
+                // Create gain nodes for each oscillator
+                const gain1 = this.audioContext.createGain();
+                const gain2 = this.audioContext.createGain();
+                const gain3 = this.audioContext.createGain();
+                
+                // Set levels for cowbell mix
+                gain1.gain.setValueAtTime(0.3, now);
+                gain2.gain.setValueAtTime(0.2, now);
+                gain3.gain.setValueAtTime(0.1, now);
+                
+                // Create envelope
+                const envelope = this.audioContext.createGain();
+                envelope.gain.setValueAtTime(0, now);
+                envelope.gain.linearRampToValueAtTime(0.5, now + 0.01);
+                envelope.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                
+                // Connect oscillators
+                osc1.connect(gain1);
+                osc2.connect(gain2);
+                osc3.connect(gain3);
+                
+                gain1.connect(envelope);
+                gain2.connect(envelope);
+                gain3.connect(envelope);
+                
+                envelope.connect(this.audioContext.destination);
+                
+                // Start and stop
+                osc1.start(now);
+                osc2.start(now);
+                osc3.start(now);
+                
+                osc1.stop(now + 0.2);
+                osc2.stop(now + 0.2);
+                osc3.stop(now + 0.2);
+                
+                return { osc1, osc2, osc3, envelope };
+            }
+            
+            createElectricPianoSound(frequency) {
+                const now = this.audioContext.currentTime;
+                
+                // Create main oscillator
+                const osc = this.audioContext.createOscillator();
+                osc.frequency.setValueAtTime(frequency, now);
+                osc.type = 'triangle';
+                
+                // Create detune for wavy effect
+                const detune = this.audioContext.createOscillator();
+                detune.frequency.setValueAtTime(5, now); // 5Hz vibrato
+                
+                const detuneGain = this.audioContext.createGain();
+                detuneGain.gain.setValueAtTime(10, now); // 10 cents detune
+                
+                detune.connect(detuneGain);
+                detuneGain.connect(osc.detune);
+                
+                // Create filter for electric piano character
+                const filter = this.audioContext.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(2000, now);
+                filter.Q.setValueAtTime(5, now);
+                
+                // Create envelope
+                const envelope = this.audioContext.createGain();
+                envelope.gain.setValueAtTime(0, now);
+                envelope.gain.linearRampToValueAtTime(0.4, now + 0.02);
+                envelope.gain.exponentialRampToValueAtTime(0.3, now + 0.1);
+                envelope.gain.exponentialRampToValueAtTime(0.01, now + 1.5);
+                
+                // Connect
+                osc.connect(filter);
+                filter.connect(envelope);
+                envelope.connect(this.audioContext.destination);
+                
+                // Start and stop
+                osc.start(now);
+                detune.start(now);
+                
+                osc.stop(now + 2);
+                detune.stop(now + 2);
+                
+                return { osc, detune, envelope };
+            }
+            
+            create808BassSound(frequency) {
+                const now = this.audioContext.currentTime;
+                
+                // Create oscillator for 808 bass
+                const osc = this.audioContext.createOscillator();
+                osc.frequency.setValueAtTime(frequency, now);
+                osc.type = 'sine';
+                
+                // Create pitch envelope for 808 slide
+                const pitchEnv = this.audioContext.createGain();
+                pitchEnv.gain.setValueAtTime(frequency * 2, now);
+                pitchEnv.gain.linearRampToValueAtTime(frequency, now + 0.1);
+                
+                pitchEnv.connect(osc.frequency);
+                
+                // Create filter for 808 character
+                const filter = this.audioContext.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(200, now);
+                filter.Q.setValueAtTime(10, now);
+                
+                // Create envelope
+                const envelope = this.audioContext.createGain();
+                envelope.gain.setValueAtTime(0, now);
+                envelope.gain.linearRampToValueAtTime(0.8, now + 0.01);
+                envelope.gain.exponentialRampToValueAtTime(0.4, now + 0.1);
+                envelope.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                
+                // Connect
+                osc.connect(filter);
+                filter.connect(envelope);
+                envelope.connect(this.audioContext.destination);
+                
+                // Start and stop
+                osc.start(now);
+                osc.stop(now + 1);
+                
+                return { osc, pitchEnv, envelope };
+            }
+            
+            createSynthPluckSound(frequency) {
+                const now = this.audioContext.currentTime;
+                
+                // Create oscillator
+                const osc = this.audioContext.createOscillator();
+                osc.frequency.setValueAtTime(frequency, now);
+                osc.type = 'sawtooth';
+                
+                // Create filter for pluck character
+                const filter = this.audioContext.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(3000, now);
+                filter.Q.setValueAtTime(15, now);
+                
+                // Create envelope (very short for pluck)
+                const envelope = this.audioContext.createGain();
+                envelope.gain.setValueAtTime(0, now);
+                envelope.gain.linearRampToValueAtTime(0.6, now + 0.005);
+                envelope.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                
+                // Connect
+                osc.connect(filter);
+                filter.connect(envelope);
+                envelope.connect(this.audioContext.destination);
+                
+                // Start and stop
+                osc.start(now);
+                osc.stop(now + 0.5);
+                
+                return { osc, envelope };
+            }
+            
+            createPhonkCowbellHit() {
+                const now = this.audioContext.currentTime;
+                
+                // Classic phonk cowbell frequencies
+                const cowbellFreq = 800;
+                
+                // Create oscillators
+                const osc1 = this.audioContext.createOscillator();
+                const osc2 = this.audioContext.createOscillator();
+                
+                osc1.frequency.setValueAtTime(cowbellFreq, now);
+                osc2.frequency.setValueAtTime(cowbellFreq * 1.5, now);
+                
+                osc1.type = 'square';
+                osc2.type = 'square';
+                
+                // Create distortion for phonk sound
+                const distortion = this.audioContext.createWaveShaper();
+                distortion.curve = this.makeDistortionCurve(50);
+                distortion.oversample = '4x';
+                
+                // Create envelope
+                const envelope = this.audioContext.createGain();
+                envelope.gain.setValueAtTime(0, now);
+                envelope.gain.linearRampToValueAtTime(0.7, now + 0.001);
+                envelope.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+                
+                // Connect
+                osc1.connect(distortion);
+                osc2.connect(distortion);
+                distortion.connect(envelope);
+                envelope.connect(this.audioContext.destination);
+                
+                // Start and stop
+                osc1.start(now);
+                osc2.start(now);
+                
+                osc1.stop(now + 0.1);
+                osc2.stop(now + 0.1);
+                
+                return { osc1, osc2, envelope };
+            }
+            
+            createPhonkPercussion() {
+                const now = this.audioContext.currentTime;
+                
+                // Create noise for percussion
+                const bufferSize = this.audioContext.sampleRate * 0.1;
+                const buffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+                const data = buffer.getChannelData(0);
+                
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = Math.random() * 2 - 1;
+                }
+                
+                const noise = this.audioContext.createBufferSource();
+                noise.buffer = buffer;
+                
+                // Create filter for percussion
+                const filter = this.audioContext.createBiquadFilter();
+                filter.type = 'highpass';
+                filter.frequency.setValueAtTime(1000, now);
+                filter.Q.setValueAtTime(5, now);
+                
+                // Create envelope
+                const envelope = this.audioContext.createGain();
+                envelope.gain.setValueAtTime(0, now);
+                envelope.gain.linearRampToValueAtTime(0.8, now + 0.001);
+                envelope.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
+                
+                // Connect
+                noise.connect(filter);
+                filter.connect(envelope);
+                envelope.connect(this.audioContext.destination);
+                
+                // Start and stop
+                noise.start(now);
+                
+                return { noise, envelope };
+            }
+            
+            createPhonkChord(frequency) {
+                const now = this.audioContext.currentTime;
+                
+                // Phonk chord intervals (minor third + perfect fifth)
+                const chordFreqs = [
+                    frequency,
+                    frequency * 1.189,  // minor third
+                    frequency * 1.5     // perfect fifth
+                ];
+                
+                const oscillators = [];
+                const envelopes = [];
+                
+                chordFreqs.forEach((freq, index) => {
+                    const osc = this.audioContext.createOscillator();
+                    osc.frequency.setValueAtTime(freq, now);
+                    osc.type = index === 0 ? 'sawtooth' : 'square';
+                    
+                    const envelope = this.audioContext.createGain();
+                    envelope.gain.setValueAtTime(0, now);
+                    envelope.gain.linearRampToValueAtTime(0.3, now + 0.01);
+                    envelope.gain.exponentialRampToValueAtTime(0.2, now + 0.1);
+                    envelope.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                    
+                    // Add slight detune for character
+                    osc.detune.setValueAtTime(Math.random() * 10 - 5, now);
+                    
+                    osc.connect(envelope);
+                    envelope.connect(this.audioContext.destination);
+                    
+                    osc.start(now);
+                    osc.stop(now + 1);
+                    
+                    oscillators.push(osc);
+                    envelopes.push(envelope);
+                });
+                
+                return { oscillators, envelopes };
+            }
+            
+            setupPiano() {
+                const piano = document.getElementById('piano');
+                const notes = [
+                    { note: 'C', freq: 261.63, key: 'a', type: 'white' },
+                    { note: 'C#', freq: 277.18, key: 'w', type: 'black' },
+                    { note: 'D', freq: 293.66, key: 's', type: 'white' },
+                    { note: 'D#', freq: 311.13, key: 'e', type: 'black' },
+                    { note: 'E', freq: 329.63, key: 'd', type: 'white' },
+                    { note: 'F', freq: 349.23, key: 'f', type: 'white' },
+                    { note: 'F#', freq: 369.99, key: 't', type: 'black' },
+                    { note: 'G', freq: 392.00, key: 'g', type: 'white' },
+                    { note: 'G#', freq: 415.30, key: 'y', type: 'black' },
+                    { note: 'A', freq: 440.00, key: 'h', type: 'white' },
+                    { note: 'A#', freq: 466.16, key: 'j', type: 'black' },
+                    { note: 'B', freq: 493.88, key: 'k', type: 'white' },
+                    { note: 'C', freq: 523.25, key: 'l', type: 'white', octave: 5 }
+                ];
+                
+                notes.forEach(note => {
+                    const key = document.createElement('div');
+                    key.className = `piano-key ${note.type}`;
+                    key.textContent = note.note;
+                    key.dataset.freq = note.freq;
+                    key.onclick = () => this.playNote(note.freq, note.note);
+                    key.onmouseup = () => this.stopNote();
+                    piano.appendChild(key);
+                });
+            }
+            
+            setupEventListeners() {
+                // Sound preset selector
+                document.getElementById('soundPreset').addEventListener('change', (e) => {
+                    this.currentPreset = e.target.value;
+                    this.updateStatus('Preset: ' + e.target.value);
+                });
+                
+                // Frequency slider
+                document.getElementById('frequency').addEventListener('input', (e) => {
+                    const freq = parseFloat(e.target.value);
+                    this.oscillator.frequency.setValueAtTime(freq, this.audioContext.currentTime);
+                    document.getElementById('freqDisplay').textContent = freq.toFixed(2) + ' Hz';
+                    this.updateNoteDisplay(freq);
+                });
+                
+                // Volume slider
+                document.getElementById('volume').addEventListener('input', (e) => {
+                    const volume = parseFloat(e.target.value) / 100;
+                    this.gainNode.gain.setValueAtTime(volume, this.audioContext.currentTime);
+                });
+                
+                // Wave type selector
+                document.getElementById('waveType').addEventListener('change', (e) => {
+                    this.oscillator.type = e.target.value;
+                });
+                
+                // Distortion slider
+                document.getElementById('distortion').addEventListener('input', (e) => {
+                    const amount = parseFloat(e.target.value);
+                    this.distortionNode.curve = this.makeDistortionCurve(amount);
+                });
+                
+                // Filter slider
+                document.getElementById('filter').addEventListener('input', (e) => {
+                    const freq = parseFloat(e.target.value);
+                    this.filterNode.frequency.setValueAtTime(freq, this.audioContext.currentTime);
+                });
+                
+                // Envelope controls
+                ['attack', 'decay', 'sustain', 'release'].forEach(param => {
+                    document.getElementById(param).addEventListener('input', (e) => {
+                        const value = parseFloat(e.target.value);
+                        // Update envelope parameters
+                        this.updateEnvelope();
+                    });
+                });
+                
+                // Control buttons
+                document.getElementById('playBtn').addEventListener('click', () => this.togglePlay());
+                document.getElementById('stopBtn').addEventListener('click', () => this.stop());
+                document.getElementById('recordBtn').addEventListener('click', () => this.toggleRecord());
+            }
+            
+            playNote(frequency, note) {
+                const preset = document.getElementById('soundPreset').value;
+                
+                // Stop any currently playing sound
+                if (this.isPlaying) {
+                    this.stopNote();
+                }
+                
+                // Play based on selected preset
+                switch (preset) {
+                    case 'cowbell':
+                        this.currentSound = this.createCowbellSound(frequency);
+                        break;
+                    case 'electric-piano':
+                        this.currentSound = this.createElectricPianoSound(frequency);
+                        break;
+                    case '808-bass':
+                        this.currentSound = this.create808BassSound(frequency);
+                        break;
+                    case 'synth-pluck':
+                        this.currentSound = this.createSynthPluckSound(frequency);
+                        break;
+                    case 'phonk-cowbell-hit':
+                        this.currentSound = this.createPhonkCowbellHit();
+                        break;
+                    case 'phonk-perc':
+                        this.currentSound = this.createPhonkPercussion();
+                        break;
+                    case 'phonk-chord':
+                        this.currentSound = this.createPhonkChord(frequency);
+                        break;
+                    default:
+                        // Basic synth
+                        this.currentSound = this.createBasicSound(frequency);
+                }
+                
+                this.isPlaying = true;
+                this.updateStatus('Playing: ' + note + ' (' + preset + ')');
+                this.recordNote(note);
+                
+                // Start visualization
+                this.startVisualization();
+            }
+            
+            createBasicSound(frequency) {
+                const now = this.audioContext.currentTime;
+                
+                const osc = this.audioContext.createOscillator();
+                osc.type = this.oscillator.type;
+                osc.frequency.setValueAtTime(frequency, now);
+                
+                const gain = this.audioContext.createGain();
+                gain.gain.setValueAtTime(this.gainNode.gain.value, now);
+                
+                // Apply envelope
+                const attack = parseFloat(document.getElementById('attack').value);
+                const decay = parseFloat(document.getElementById('decay').value);
+                const sustain = parseFloat(document.getElementById('sustain').value);
+                const release = parseFloat(document.getElementById('release').value);
+                
+                gain.gain.setValueAtTime(0, now);
+                gain.gain.linearRampToValueAtTime(this.gainNode.gain.value, now + attack);
+                gain.gain.linearRampToValueAtTime(sustain, now + attack + decay);
+                gain.gain.linearRampToValueAtTime(0, now + attack + decay + sustain + release);
+                
+                osc.connect(gain);
+                gain.connect(this.audioContext.destination);
+                osc.start(now);
+                
+                return { osc, gain };
+            }
+            
+            stopNote() {
+                if (this.currentSound) {
+                    // Handle different sound types
+                    if (this.currentSound.osc1 && this.currentSound.osc2 && this.currentSound.osc3) {
+                        // Cowbell sound
+                        const now = this.audioContext.currentTime;
+                        this.currentSound.envelope.gain.linearRampToValueAtTime(0, now);
+                    } else if (this.currentSound.oscillators) {
+                        // Phonk chord
+                        const now = this.audioContext.currentTime;
+                        this.currentSound.envelopes.forEach(env => {
+                            env.gain.linearRampToValueAtTime(0, now);
+                        });
+                    } else if (this.currentSound.osc && this.currentSound.envelope) {
+                        // Single oscillator sounds
+                        const now = this.audioContext.currentTime;
+                        this.currentSound.envelope.gain.linearRampToValueAtTime(0, now);
+                    } else if (this.currentSound.osc && this.currentSound.gain) {
+                        // Basic sound
+                        const now = this.audioContext.currentTime;
+                        this.currentSound.gain.linearRampToValueAtTime(0, now);
+                    }
+                    
+                    this.currentSound = null;
+                    this.isPlaying = false;
+                    
+                    this.updateStatus('Stopped');
+                    this.stopVisualization();
+                }
+            }
+            
+            togglePlay() {
+                if (this.isPlaying) {
+                    this.stopNote();
+                } else {
+                    const freq = parseFloat(document.getElementById('frequency').value);
+                    this.playNote(freq, 'Note');
+                }
+            }
+            
+            toggleRecord() {
+                this.isRecording = !this.isRecording;
+                const btn = document.getElementById('recordBtn');
+                
+                if (this.isRecording) {
+                    btn.textContent = '⏹ Stop Recording';
+                    btn.classList.add('active');
+                    this.updateStatus('Recording...');
+                } else {
+                    btn.textContent = '⏺ Record';
+                    btn.classList.remove('active');
+                    this.updateStatus('Ready');
+                    this.recordedNotes = [];
+                }
+            }
+            
+            recordNote(frequency) {
+                if (this.isRecording) {
+                    this.recordedNotes.push({
+                        frequency: frequency,
+                        timestamp: Date.now()
+                    });
+                    console.log('Recorded note:', frequency);
+                }
+            }
+            
+            updateEnvelope() {
+                // This would be implemented with actual ADSR envelope
+                // For now, we'll use basic gain control
+            }
+            
+            updateNoteDisplay(frequency) {
+                const noteNames = {
+                    261.63: 'C3', 277.18: 'C#3', 293.66: 'D3', 311.13: 'D#3',
+                    329.63: 'E3', 349.23: 'F3', 369.99: 'F#3', 392.00: 'G3',
+                    415.30: 'G#3', 440.00: 'A4', 466.16: 'A#4', 493.88: 'B4',
+                    523.25: 'C5', 554.37: 'C#5', 587.33: 'D5', 622.25: 'D#5'
+                };
+                
+                const note = noteNames[Math.round(frequency)];
+                document.getElementById('noteDisplay').textContent = note || 'Custom';
+            }
+            
+            startVisualization() {
+                this.visualizationCanvas = document.getElementById('visualizer');
+                this.visualizationCtx = this.visualizationCanvas.getContext('2d');
+                this.isVisualizing = true;
+                this.drawVisualization();
+            }
+            
+            stopVisualization() {
+                this.isVisualizing = false;
+            }
+            
+            drawVisualization() {
+                if (!this.isVisualizing) return;
+                
+                const canvas = this.visualizationCanvas;
+                const ctx = this.visualizationCtx;
+                const width = canvas.width;
+                const height = canvas.height;
+                
+                requestAnimationFrame(() => this.drawVisualization());
+            }
+            
+            updateStatus(status) {
+                document.getElementById('status').textContent = status;
+            }
+            
+            updateInfo() {
+                document.getElementById('sampleRate').textContent = this.audioContext.sampleRate + ' Hz';
+            }
+        }
+        
+        // Initialize Music Studio
+        let musicStudio;
+        
+        window.addEventListener('DOMContentLoaded', () => {
+            musicStudio = new MusicStudio();
+        });
+    </script>
+</body>
+</html>
