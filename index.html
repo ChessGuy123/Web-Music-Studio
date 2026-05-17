@@ -188,41 +188,78 @@
         }
         
         .control-group {
-            background: var(--surface-light);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: var(--border-radius-md);
-            padding: 20px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+            border: 1px solid rgba(255, 0, 110, 0.2);
+            border-radius: var(--border-radius-lg);
+            padding: 25px;
             transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
         }
         
         .control-group:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
             border-color: var(--primary-color);
+            background: linear-gradient(135deg, rgba(255, 0, 110, 0.1) 0%, rgba(131, 56, 236, 0.05) 100%);
         }
 
         .control-group h3 {
             color: var(--primary-color);
-            margin-bottom: 15px;
-            font-size: 1.2rem;
-            font-weight: 600;
+            margin-bottom: 18px;
+            font-size: 1.1rem;
+            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-group h3::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: var(--gradient-primary);
+            border-radius: 2px;
         }
 
         .slider-container {
-            margin-bottom: 20px;
+            margin-bottom: 18px;
+        }
+
+        .slider-container label {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .slider-container span {
+            display: inline-block;
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-left: 8px;
+            background: rgba(255, 0, 110, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
         }
 
         .slider {
             width: 100%;
-            height: 8px;
-            border-radius: 4px;
-            background: var(--gradient-primary);
+            height: 6px;
+            border-radius: 3px;
+            background: linear-gradient(90deg, rgba(255, 0, 110, 0.3) 0%, rgba(131, 56, 236, 0.3) 100%);
             outline: none;
             cursor: pointer;
             -webkit-appearance: none;
             appearance: none;
+            transition: all 0.3s ease;
+        }
+
+        .slider:hover {
+            background: linear-gradient(90deg, rgba(255, 0, 110, 0.5) 0%, rgba(131, 56, 236, 0.5) 100%);
         }
         
         .slider::-webkit-slider-thumb {
@@ -420,35 +457,81 @@
         }
 
         .ai-phonk-creator {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 30px;
-            margin-bottom: 20px;
+            background: linear-gradient(135deg, rgba(255, 0, 110, 0.1) 0%, rgba(131, 56, 236, 0.1) 100%);
+            border: 2px solid rgba(255, 0, 110, 0.3);
+            border-radius: var(--border-radius-xl);
+            padding: 35px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow-lg), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ai-phonk-creator::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-primary);
+        }
+
+        .ai-phonk-creator h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
         .creator-description {
             text-align: center;
             color: var(--text-secondary);
-            margin-bottom: 30px;
+            margin-bottom: 35px;
             font-size: 1.1rem;
+            font-weight: 400;
         }
 
         .ai-controls {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 25px;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
         }
 
         .style-selector {
             width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.05);
+            padding: 14px 16px;
+            border-radius: var(--border-radius-md);
+            border: 2px solid rgba(255, 0, 110, 0.3);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
             color: var(--text-primary);
             font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .style-selector:hover {
+            border-color: var(--primary-color);
+            background: linear-gradient(135deg, rgba(255, 0, 110, 0.15) 0%, rgba(131, 56, 236, 0.1) 100%);
+        }
+
+        .style-selector:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255, 0, 110, 0.2);
+        }
+
+        .style-selector option {
+            background: var(--surface-dark);
+            color: var(--text-primary);
+            padding: 10px;
         }
 
         .parameter-controls {
@@ -470,14 +553,37 @@
 
         .setting-item label {
             color: var(--text-secondary);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 6px;
+            display: block;
         }
 
         .setting-item input, .setting-item select {
-            padding: 8px;
-            border-radius: 6px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.05);
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: var(--border-radius-md);
+            border: 2px solid rgba(255, 0, 110, 0.2);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .setting-item input:hover, .setting-item select:hover {
+            border-color: var(--primary-color);
+            background: linear-gradient(135deg, rgba(255, 0, 110, 0.12) 0%, rgba(131, 56, 236, 0.08) 100%);
+        }
+
+        .setting-item input:focus, .setting-item select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(255, 0, 110, 0.2);
+        }
+
+        .setting-item select option {
+            background: var(--surface-dark);
             color: var(--text-primary);
         }
 
@@ -1625,6 +1731,9 @@
                 this.isGeneratingAISong = true;
                 this.updateStatus('Generating AI Phonk Song...');
                 
+                // Clear previous song
+                this.aiSong = [];
+                
                 // Get user preferences
                 this.energyLevel = parseInt(document.getElementById('energyLevel').value);
                 this.complexity = parseInt(document.getElementById('complexity').value);
@@ -1662,9 +1771,16 @@
                         this.generateGozaloPhonk();
                 }
                 
-                this.updateStatus('AI Phonk Song Generated! (' + this.aiSong.length + ' notes)');
-                this.updateAIStatus();
-                this.addAnalysis('AI Generated ' + this.phonkStyle.charAt(0).toUpperCase() + this.phonkStyle.slice(1) + ' Phonk Song');
+                this.isGeneratingAISong = false;
+                
+                if (this.aiSong.length === 0) {
+                    this.updateStatus('Error: No notes generated. Please try again.');
+                    console.error('Song generation failed - no notes generated');
+                } else {
+                    this.updateStatus('AI Phonk Song Generated! (' + this.aiSong.length + ' notes)');
+                    this.updateAIStatus();
+                    this.addAnalysis('AI Generated ' + this.phonkStyle.charAt(0).toUpperCase() + this.phonkStyle.slice(1) + ' Phonk Song');
+                }
             }
             
             generateGozaloPhonk() {
@@ -2437,45 +2553,6 @@
                 return melodyNotes;
             }
             
-            playAISong() {
-                if (this.aiSong.length === 0) {
-                    this.updateStatus('No AI song generated. Generate a song first!');
-                    return;
-                }
-                
-                this.isPlayingAISong = true;
-                this.updateStatus('Playing AI Phonk Song...');
-                
-                const btn = document.getElementById('playAISongBtn');
-                btn.textContent = 'Stop AI Song';
-                btn.classList.add('active');
-                
-                // Play each AI note at its timestamp
-                this.aiSong.forEach(noteData => {
-                    setTimeout(() => {
-                        if (this.isPlayingAISong) {
-                            // Set preset before playing
-                            document.getElementById('soundPreset').value = noteData.preset;
-                            this.playNote(noteData.frequency, noteData.note);
-                        }
-                    }, noteData.timestamp);
-                });
-                
-                // Stop playback after last note
-                const lastNoteTime = Math.max(...this.aiSong.map(n => n.timestamp));
-                setTimeout(() => {
-                    this.stopAISong();
-                }, lastNoteTime + 1000);
-            }
-            
-            stopAISong() {
-                this.isPlayingAISong = false;
-                this.updateStatus('AI Song stopped');
-                
-                const btn = document.getElementById('playAISongBtn');
-                btn.textContent = 'Play AI Song';
-                btn.classList.remove('active');
-            }
             
             saveAISong() {
                 if (this.aiSong.length === 0) {
